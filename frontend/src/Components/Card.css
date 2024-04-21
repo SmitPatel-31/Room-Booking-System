@@ -1,0 +1,31 @@
+.card {
+    width: 500px; /* Set width to 500px */
+    margin: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+    position: relative; /* Position relative to contain absolutely positioned facilities */
+  }
+  
+  .card-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .card-facilities {
+    position: absolute; /* Remove absolute positioning */
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+    margin-right:10px
+  }
+  
+  .facility-box {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 5px 10px;
+  }
+  
