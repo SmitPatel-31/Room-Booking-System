@@ -27,7 +27,7 @@ class PyObjectId(ObjectId):
 # Pydantic models to validate the data
 class Item(BaseModel):
     roomNo: int
-    bookings: Optional[List[str]]
+    bookings: Optional[List]
     facility: Optional[List[str]]
     capacity: Optional[int]
 
@@ -37,9 +37,15 @@ class Item(BaseModel):
             ObjectId: str
         }
 
+class Booking(BaseModel):
+    m: int
+    d: int
+    y: int
+    time: str
+
 class ItemUpdate(BaseModel):
     roomNo: Optional[int] = Field(None, example=1)
-    bookings: Optional[List[str]]
+    bookings: Optional[List[Booking]]
     facility: Optional[List[str]]
     capacity: Optional[int]
 
@@ -49,7 +55,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Update this to specify the allowed origins, e.g., ["http://localhost", "http://localhost:3000"]
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Update this to specify the allowed HTTP methods
+    allow_methods=["GET", "POST", "PUT", "DELETE","PATCH"],  # Update this to specify the allowed HTTP methods
     allow_headers=["*"],  # Update this to specify the allowed headers
 )
 # Database client setup

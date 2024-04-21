@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Search from './Components/Search';
 import './App.css';
-import CardComponent from './Components/Card'; // Make sure the import matches the name and location of your component file
+
+import CardComponent from './Components/Card'; 
+import BookComponent from './Components/Book';// Make sure the import matches the name and location of your component file
 const App = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -34,15 +36,21 @@ const App = () => {
 
   return (
     <div>
-      <Search onSearch={handleSearch} />
+      <div>
+        <Search onSearch={handleSearch} />
+
+      </div>
       <div className="card-container">
         {searchResults.map((room, index) => (
         <CardComponent data={room} key={index} onCardClick={handleCardClick}/>
       ))}
       </div>
-      
-      
+
+      {dialogOpen && (
+        <BookComponent room={selectedRoom} open={dialogOpen} onClose={handleCloseDialog} />
+      )}
     </div>
+
   );
 };
 
