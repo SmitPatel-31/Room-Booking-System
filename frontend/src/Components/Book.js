@@ -5,13 +5,11 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import dayjs from 'dayjs';
 
-const BookComponent = ({ room, open, onClose }) => {
+const BookComponent = ({ room, open, onClose, uid }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
-
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    // Reset selected slot when date changes
     setSelectedSlot(null);
   };
 
@@ -20,17 +18,14 @@ const BookComponent = ({ room, open, onClose }) => {
   };
 
   const handleBookRoom = () => {
-    // Handle booking the room with the selected date and time slot
-    // You can implement the booking logic here
-    // For demonstration, let's just log the selected date and time slot
+
     console.log("Selected Date:", selectedDate);
     console.log("Selected Time Slot:", selectedSlot);
-    const date = { 'm': selectedDate.$M, 'd': selectedDate.$D, 'y': selectedDate.$y, 'time': selectedSlot }
+    const date = { 'm': selectedDate.$M, 'd': selectedDate.$D, 'y': selectedDate.$y, 'time': selectedSlot, 'user': uid }
     room.bookings.push(date)
     console.log(room)
     const url = `http://127.0.0.1:8000/updateroom/${room.roomNo}`;
 
-    // Perform the PATCH request
     fetch(url, {
       method: 'PATCH',
       headers: {
@@ -42,21 +37,18 @@ const BookComponent = ({ room, open, onClose }) => {
         if (!response.ok) {
           throw new Error('Failed to update room booking');
         }
-        // Close the dialog if the update is successful
         onClose();
       })
       .catch(error => {
         console.error('Error updating room booking:', error);
-        // Handle error scenarios
       });
-    // Close the dialog
     onClose();
   };
 
-  // Generate mock time slots
+  // Time slots
   const timeSlots = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
 
-  // const currentMonthStart = dayjs().startOf('month');
+
   const currentMonthEnd = dayjs().endOf('month');
   const currentDate = dayjs();
 
@@ -65,7 +57,7 @@ const BookComponent = ({ room, open, onClose }) => {
       <DialogTitle>Book Room</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} alignItems="center">
-          {/* Left side: Date selection */}
+          {/* Date selection */}
           <Grid item xs={8} md={6}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <StaticDatePicker
@@ -78,7 +70,7 @@ const BookComponent = ({ room, open, onClose }) => {
               />
             </LocalizationProvider>
           </Grid>
-          {/* Right side: Room details, slot selection, and book button */}
+
           <Grid item xs={8} md={6}>
             <Box overflow="auto">
               <Grid container spacing={2} direction="column">
@@ -95,23 +87,33 @@ const BookComponent = ({ room, open, onClose }) => {
                   )}
                   {selectedDate && (
                     <Grid container spacing={1}>
-                     {timeSlots.map((timeSlot, index) => (
-    <Grid item key={index} xs={4} sm={3} md={3}>
-       <Button
-    fullWidth
-    variant={selectedSlot === timeSlot ? "contained" : "outlined"}
-    disabled={room.bookings.some(booking => (
-        booking.d === selectedDate.$D &&
-        booking.m === selectedDate.$M &&
-        booking.y === selectedDate.$y &&
-        booking.time === timeSlot
-    ))}
-    onClick={() => handleSlotSelection(timeSlot)}
->
-    {timeSlot}
-</Button>
-    </Grid>
-))}
+                      {timeSlots.map((timeSlot, index) => (
+                        <Grid item key={index} xs={4} sm={3} md={3}>
+                          <Button
+                            fullWidth
+                            variant={selectedSlot === timeSlot ? "contained" : "outlined"}
+                            disabled={room.bookings.some(booking => (
+                              booking.d === selectedDate.$D &&
+                              booking.m === selectedDate.$M &&
+                              booking.y === selectedDate.$y &&
+                              booking.time === timeSlot
+                            ))}
+                            style={{
+                              backgroundColor: room.bookings.some(booking => (
+                                booking.d === selectedDate.$D &&
+                                booking.m === selectedDate.$M &&
+                                booking.y === selectedDate.$y &&
+                                booking.time === timeSlot &&
+                                booking.user === uid
+                              )) ? 'lightgreen' : ''
+                            }}
+                            onClick={() => handleSlotSelection(timeSlot)}
+                          >
+                            {timeSlot}
+                          </Button>
+
+                        </Grid>
+                      ))}
 
 
                     </Grid>

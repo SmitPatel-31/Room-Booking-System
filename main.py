@@ -42,12 +42,14 @@ class Booking(BaseModel):
     d: int
     y: int
     time: str
+    user:str
 
 class ItemUpdate(BaseModel):
     roomNo: Optional[int] = Field(None, example=1)
     bookings: Optional[List[Booking]]
     facility: Optional[List[str]]
     capacity: Optional[int]
+
 
 app = FastAPI()
 
@@ -76,9 +78,7 @@ async def shutdown_event():
 
 @app.post("/addroom/", response_model=Item, status_code=201)
 async def create_item(item: Item):
-    # Insert the item into the MongoDB collection
     result = await db.rooms.insert_one(item.dict(by_alias=True))
-    # Check if the insert was successful
     if result.inserted_id:
         item = await db.rooms.find_one({"_id": result.inserted_id})
         return item
@@ -87,7 +87,6 @@ async def create_item(item: Item):
 
 @app.patch("/updateroom/{roomNo}", response_model=Item)
 async def update_room(roomNo: int, update: ItemUpdate):
-    # Update the room in MongoDB
     result = await db.rooms.update_one({"roomNo": roomNo}, {"$set": update.dict(exclude_unset=True)})
     if result.modified_count:
         updated_room = await db.rooms.find_one({"roomNo": roomNo})
@@ -106,7 +105,6 @@ async def get_room_by_roomNo(roomNo: int):
 
 @app.get("/allrooms/", response_model=List[Item])
 async def search_rooms():
-    # Fetch all rooms data
     rooms = await db.rooms.find({}).to_list(length=100)
     return rooms
 
