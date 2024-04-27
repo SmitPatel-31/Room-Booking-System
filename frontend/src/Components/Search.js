@@ -10,14 +10,14 @@ const Search = ({ onSearch }) => {
     const { value } = event.target;
     setQuery(value);
     
-      onSearch(value);
+    onSearch(value);
     
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
    
-      onSearch(query);
+    onSearch(query);
     
   };
 

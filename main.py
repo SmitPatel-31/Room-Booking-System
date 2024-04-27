@@ -5,7 +5,8 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from bson.regex import Regex
 import logging
-
+from fastapi.responses import FileResponse
+import os
 from fastapi.middleware.cors import CORSMiddleware
 
 # Helper class for handling MongoDB ObjectId types in Pydantic models
@@ -30,6 +31,7 @@ class Item(BaseModel):
     bookings: Optional[List]
     facility: Optional[List[str]]
     capacity: Optional[int]
+    Img:Optional[str]
 
     class Config:
         arbitrary_types_allowed = True
@@ -49,6 +51,7 @@ class ItemUpdate(BaseModel):
     bookings: Optional[List[Booking]]
     facility: Optional[List[str]]
     capacity: Optional[int]
+    Img:Optional[str]
 
 
 app = FastAPI()
@@ -126,3 +129,12 @@ async def search_rooms(query_text: str = Query(..., alias="q")):
 
     rooms = await db.rooms.find(query).to_list(length=100)
     return rooms
+
+
+@app.get("/images/{image_name}", response_class=FileResponse)
+async def get_image(image_name: str):
+    image_path = os.path.join("images", image_name)
+    if os.path.isfile(image_path):
+        return FileResponse(image_path)
+    else:
+        raise HTTPException(status_code=404, detail="Image not found.")

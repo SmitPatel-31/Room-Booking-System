@@ -19,8 +19,6 @@ const BookComponent = ({ room, open, onClose, uid }) => {
 
   const handleBookRoom = () => {
 
-    console.log("Selected Date:", selectedDate);
-    console.log("Selected Time Slot:", selectedSlot);
     const date = { 'm': selectedDate.$M, 'd': selectedDate.$D, 'y': selectedDate.$y, 'time': selectedSlot, 'user': uid }
     room.bookings.push(date)
     console.log(room)
